@@ -11,15 +11,19 @@
         
         function m_over(){
             let thumnails = document.getElementsByClassName("thumnail");
-            for(let i=0, len=thumnails.length; i<len; i++)
+            for(let i=0, len=thumnails.length; i<len; i++){
                 thumnails[i].style.opacity="1";
+                thumnails[i].style.zIndex="1";
+            }
         }
 
         function m_out(){
             let thumnails = document.getElementsByClassName("thumnail");
             for(let i=0, len=thumnails.length; i<len; i++)
-                if( thumnails[i].id !== last_selected_id )
+                if( thumnails[i].id !== last_selected_id ){
                     thumnails[i].style.opacity="0.4";
+                    thumnails[i].style.zIndex="0";
+                }
         }
 
         function m_onclick(movie_id){
@@ -69,14 +73,11 @@
                         </a>
                         <div class="uptext">                 
                             <li>{{ movie.title }}</li>
-                            <li><br></li>
-                            <li>{{ movie.vote_average }}</li>
-                            <div style="border-radius: 2em;border: 1px solid white;margin-top:10px;margin-left:4px;margin-right:4px;padding-top:2px;padding-bottom:2px;">
-                                <li>상세 정보</li>
-                            </div>
-                            <span id="v{{ movie.id }}" style="opacity:0;">
+                            <li></li>
+                            <li style="border-radius: 2em;border: 2px solid white;height:25px;margin-top:10px;margin-left:10px;margin-right:10px;padding-top:2px;padding-bottom:2px;">{{ movie.vote_average }}</li>
+                            <div id="v{{ movie.id }}" style="opacity:0;">
                                 {{ movie.video_path }}
-                            </span>
+                            </div>
                         </div> 
                     </div> 
             {% endfor %}
