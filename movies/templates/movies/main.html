@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowM</title>
+
+    <script>
+        let last_selected_id = 0;
+        
+        function m_over(){
+            let thumnails = document.getElementsByClassName("thumnail");
+            for(let i=0, len=thumnails.length; i<len; i++)
+                thumnails[i].style.opacity="1";
+        }
+
+        function m_out(){
+            let thumnails = document.getElementsByClassName("thumnail");
+            for(let i=0, len=thumnails.length; i<len; i++)
+                if( thumnails[i].id !== last_selected_id )
+                    thumnails[i].style.opacity="0.4";
+        }
+
+        function m_onclick(movie_id){
+            if (last_selected_id === movie_id){
+                document.getElementById("a"+movie_id).href = "{% url 'movies:detail' 777 %}".replace(/777/, Number(movie_id));
+            }
+            else if (last_selected_id === 0){
+                last_selected_id = movie_id;
+            }
+            let last_selected_movie = document.getElementById(last_selected_id);
+            last_selected_movie.style.transform="scale(1.0)";
+            last_selected_movie.style.border="none";
+
+            last_selected_id = movie_id;
+            let now_selected_movie = document.getElementById(movie_id);
+            now_selected_movie.style.transform="scale(1.2)";
+            now_selected_movie.style.border="5px solid white";
+            now_selected_movie.style.opacity="1";
+            document.getElementById("video_iframe").src = "https://www.youtube.com/embed/777?"+
+            "autoplay=1&disablekb=1&controls=0&fs=0&loop=1&&playlist=777&modestbranding=1&mute=1"
+            .replace(/777/, document.getElementById("v"+movie_id).innerText)
+        }
+    </script>
+</head>
+<body>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
+
+    <div class="fullscreen">
+    {% if popular_movie_list %}
+    <iframe class="fullscreen" id='video_iframe' type="text/html" src="https://www.youtube.com/embed/{{ popular_movie_list.0.video_path }}?autoplay=1&disablekb=1&controls=0&fs=0&loop=1&&playlist={{ popular_movie_list.0.video_path }}&modestbranding=1&mute=1&color=white" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+        <div id="footer" onmouseover="m_over()" onmouseout="m_out()" >
+            <script type="text/javascript">
+                const scrollControl = document.querySelector('#footer');
+                scrollControl.addEventListener('wheel', function(e){
+                    scrollControl.scrollLeft += e.deltaY;
+                });
+            </script>
+            <div id="genre" style="background-color: red;">
+            </div>
+            {% for movie in popular_movie_list %}
+            <!-- {{ forloop.counter0 }} -->
+                    <div class="thumnails" id="{{ movie.id }}" onclick="m_onclick(this.id);">
+                        <a class="thumnail" id="a{{ movie.id }}">
+                            <img class="thumnail_img" src="https://image.tmdb.org/t/p/{{ config.thumbnail_size }}/{{ movie.poster_path }}" 
+                            alt="thumbnails"; onerror="this.src='/images/no_image.jpg'"; loading="lazy";>    
+                        </a>
+                        <div class="uptext">                 
+                            <li>{{ movie.title }}</li>
+                            <li><br></li>
+                            <li>{{ movie.vote_average }}</li>
+                            <div style="border-radius: 2em;border: 1px solid white;margin-top:10px;margin-left:4px;margin-right:4px;padding-top:2px;padding-bottom:2px;">
+                                <li>상세 정보</li>
+                            </div>
+                            <span id="v{{ movie.id }}" style="opacity:0;">
+                                {{ movie.video_path }}
+                            </span>
+                        </div> 
+                    </div> 
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No movies</p>
+    {% endif %}
+    </div>
+    <!-- now_selected_movie.location.href="{% url 'movies:detail' 777 %}".replace(/777/, 'movie.id'); -->
+    <script>window.onload = m_onclick("{{ popular_movie_list.0.id }}")</script>
+</body>
+</html>

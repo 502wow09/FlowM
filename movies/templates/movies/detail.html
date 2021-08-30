@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowM</title>
+</head>
+<body>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
+
+    <div class="fullscreen" id="backdrop_position">
+        {% if selected_movie %}
+        <div class="fullscreen" id="backdrop">
+            <img class="fullscreen" src="https://image.tmdb.org/t/p/{{ config.backdrop_size }}/{{ selected_movie.backdrop_path }}">
+        </div>
+        <div class="contents">
+            <div style="padding:10px; width:120%; height:40%">
+                <img style="width:auto; height:auto;"src="https://image.tmdb.org/t/p/{{ config.poster_size }}/{{ selected_movie.poster_path }}">
+            </div>
+            <div style="padding:10px; padding-left:30px; color:white">
+                <h1>{{ selected_movie.title }}</h1>
+                <p>original title : {{ selected_movie.original_title }} ( {{ selected_movie.release_date }} )</p>
+                <div id="vote_gage">
+                    <div id="vote_gage_bar">
+                    </div>
+                    <div style="position:absolute;width:200px; text-align:center;">
+                        {{ selected_movie.vote_average }}
+                    </div>
+                </div>
+                <p>{{ selected_movie.overview }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    <script type="text/javascript">
+        function vote_gage_event(vote_average){
+            vote_average = vote_average*10;
+            if ( vote_average < 50.0 )
+                document.getElementById("vote_gage_bar").style.backgroundColor = "red";
+            else
+                document.getElementById("vote_gage_bar").style.backgroundColor = "rgb(47, 255, 28)";
+            vote_average = String(vote_average)+'%';
+            
+            document.getElementById("vote_gage_bar").style.width = vote_average;
+        };
+        window.onload = vote_gage_event("{{ selected_movie.vote_average }}");
+    </script>
+</body>
+</html>
