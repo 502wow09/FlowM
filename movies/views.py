@@ -125,3 +125,47 @@ def detail(request, movie_id):
         'config': Configuration.objects.get(pk=1),
     }
     return render(request, 'movies/detail.html', context)
+
+# def learning(request):
+#     selects = ["now_playing", "popular", "top_rated"]
+
+#     url = "https://api.themoviedb.org/3/genre/movie/list?api_key={key}&language=ko".format(key=KEY)
+#     response = requests.get(url).json()
+#     genres = response['genres']
+#     for genre in genres:
+#         Genre.objects.get(pk=genre['id']) = genre['name']
+       
+
+#     # for select in selects:
+#     #     select_url = "https://api.themoviedb.org/3/movie/{select}?api_key={key}&language=ko&region=KR&page=1".format(select=select, key=KEY)
+#     #     select_response = requests.get(select_url).json()['results']
+
+#     #     bulk_list = []
+#     #     genre_bulk = []
+#     #     keyword_bulk = []
+#     #     similar_bulk = []
+#     #     actor_bulk = []
+#     #     director_bulk = []
+#     #     for row in select_response:
+#     #         detail_url = "https://api.themoviedb.org/3/movie/{movie_id}?api_key={key}&language=ko&append_to_response=videos,keywords,credits,similar".format(movie_id=row['id'], key=KEY)
+#     #         detail_response = requests.get(detail_url).json()
+
+#     #         bulk_list.append(Movie(
+#     #             id = row['id'],
+#     #             title = row['title'],
+#     #             original_title = row['original_title'],
+#     #             popularity = row['popularity'],
+#     #             vote_average = row['vote_average'],
+#     #             release_date = row['release_date'],
+#     #             overview = row['overview'],
+#     #             backdrop_path = row['backdrop_path'],
+#     #             poster_path = row['poster_path'],
+#     #         ))
+                        
+
+
+#     #     try: Movie.objects.bulk_create(bulk_list)
+#     #     except: pass
+
+#         content = "ㅇㅅㅇ"
+#     return render(request, 'movies/learning.html', content)
