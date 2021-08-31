@@ -24,33 +24,26 @@ class Configuration(models.Model):
 
 class Genre(models.Model):
     id = models.IntegerField(default=0, primary_key=True, blank=True)
-    owner = models.ManyToManyField(Movie, through='Movie_Genre')
     name = models.CharField(max_length=10)
 
 class Movie_Genre(models.Model):
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='movie_genre')
     genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name='movie_genre')
 
-
 class User(models.Model):
     id = models.IntegerField(default=0, primary_key=True)
-    owner = models.ManyToManyField(Movie, through='Movie_User')
     nickname = models.CharField(max_length=10)
 
 class Keyword(models.Model):
     id = models.IntegerField(default=0, primary_key=True)
-    owner_movie = models.ManyToManyField(Movie, through='Movie_Keyword')
-    owner_user = models.ManyToManyField(User, through='User_Keyword')
     name = models.CharField(max_length=20)
 
 class Movie_Keyword(models.Model):
-    id = models.IntegerField(default=0, primary_key=True)
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='movie_keyword')
     keyword_id = models.ForeignKey(Keyword, on_delete=models.CASCADE, related_name='movie_keyword')
 
 class Director(models.Model):
     id = models.IntegerField(default=0, primary_key=True)
-    owner = models.ManyToManyField(Movie, through='Movie_Director')
     name = models.CharField(max_length=50)
     original_name = models.CharField(max_length=50)
 
@@ -60,7 +53,6 @@ class Movie_Director(models.Model):
 
 class Actor(models.Model):
     id = models.IntegerField(default=0, primary_key=True)
-    owner = models.ManyToManyField(Movie, through='Movie_Actor')
     name = models.CharField(max_length=50)
     original_name = models.CharField(max_length=50)
 
