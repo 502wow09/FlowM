@@ -18,6 +18,7 @@ html, body{
     padding-bottom: 20px;
     padding-top: 2%;
     
+    /* 가로배치 */
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -36,6 +37,7 @@ html, body{
     margin-left: 100px;
     margin-right: 40px;
 
+    /* 가로배치 */
     flex: 0 0 auto;
 }
 

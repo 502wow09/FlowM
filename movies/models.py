@@ -54,13 +54,12 @@ class Movie_Director(models.Model):
 class Actor(models.Model):
     id = models.IntegerField(default=0, primary_key=True)
     name = models.CharField(max_length=50)
-    original_name = models.CharField(max_length=50)
+    character = models.CharField(max_length=50)
 
 class Movie_Actor(models.Model):
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='movie_actor')
     actor_id = models.ForeignKey(Actor, on_delete=models.CASCADE, related_name='movie_actor')    
-
-
+    
 class Movie_user(models.Model):
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='user_movie', blank=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_movie', blank=True)
