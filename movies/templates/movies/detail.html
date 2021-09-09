@@ -22,6 +22,7 @@
             <div style="padding:10px; padding-left:30px; color:white">
                 <h1>{{ selected_movie.title }}</h1>
                 <p>original title : {{ selected_movie.original_title }} ( {{ selected_movie.release_date }} )</p>
+
                 <div id="vote_gage">
                     <div id="vote_gage_bar">
                     </div>
@@ -29,8 +30,11 @@
                         {{ selected_movie.vote_average }}
                     </div>
                 </div>
+                <p>장르 : {% for genre in genres %} {{ genre }} {% endfor %}</p>
+                <!-- <p>감독 : {{ directors }}</p> -->
+                <p>배우 : {{ actors }}</p>
                 <p>{{ selected_movie.overview }}</p>
-                <p>{{ genres.recommend_id }}</p>
+                <!-- <p>키워드 : {{ keywords }}</p> -->
             </div>
         </div>
         {% endif %}
