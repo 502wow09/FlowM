@@ -51,9 +51,20 @@
 <body>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
-
     <div class="fullscreen">
-    <!-- inupt -->
+
+        <header>
+            <div class="brand_div" onclick="location.href='/'">
+                <h1 class='brand'>FlowM</h1>
+            </div>
+            <div class="input_div">
+                <form action="{% url 'movies:search' %}" method="GET">
+                    {% csrf_token %}
+                    <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
+                    <input type="submit" value="Q">
+                </form>
+            </div>
+        </header>
 
     {% if popular_movie_list %}
     <iframe class="fullscreen" id='video_iframe' type="text/html" src="https://www.youtube.com/embed/{{ popular_movie_list.0.video_path }}?autoplay=1&disablekb=1&controls=0&fs=0&loop=1&&playlist={{ popular_movie_list.0.video_path }}&modestbranding=1&mute=1&color=white" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>

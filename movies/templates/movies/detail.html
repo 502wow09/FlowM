@@ -9,14 +9,27 @@
 <body>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
-
     <div class="fullscreen" id="backdrop_position">
         {% if selected_movie %}
         <div class="fullscreen" id="backdrop">
             <img class="fullscreen" src="https://image.tmdb.org/t/p/{{ config.backdrop_size }}/{{ selected_movie.backdrop_path }}">
         </div>
+
+        <header>
+            <div class="brand_div" onclick="location.href='/'">
+                <h1 class='brand'>FlowM</h1>
+            </div>
+            <div class="input_div">
+                <form action="{% url 'movies:search' %}" method="GET">
+                    {% csrf_token %}
+                    <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
+                    <input type="submit" value="Q">
+                </form>
+            </div>
+        </header>
+
         <div class="contents">
-            <div style="padding:10px; width:120%; height:40%">
+            <div style="padding:10px; width:auto; height:40%">
                 <img style="width:auto; height:auto;"src="https://image.tmdb.org/t/p/{{ config.poster_size }}/{{ selected_movie.poster_path }}">
             </div>
             <div style="padding:10px; padding-left:30px; color:white">

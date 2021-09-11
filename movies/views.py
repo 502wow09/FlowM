@@ -53,14 +53,6 @@ def detail(request, movie_id):
     detail_response = requests.get(detail_url).json()
     
     selected_movie = Movie.objects.get(pk=movie_id)
-    # selected_movie_genre = movie.movie_genre.get(pk=movie_id)
-    # selected_choice = question.choice_set.get(pk=request.POST['choice'])
-
-    # movie = Movie.objects.filter(id=movie_id)[0]
-    # movie_genre = movie.movie_genre_set.all()
-    # movie_pr = Movie.objects.filter(id=movie_id).prefetch_related('mogie_genre_set')[0]
-    # genres = movie_pr.
-
     # 일단 필터로 movie id를 얻고. id가 일치하는 movie_genre값들을 얻고
 
     #역참조 후 정참조
@@ -226,6 +218,20 @@ def learn(request):
                 except:
                     pass
 
-    context = { 'what': 'explain' }
+    context = { 'state': 'Done.' }
     return render(request, 'movies/learn.html', context)
 
+def search(request):
+    if 'input_movie' in request.GET:
+        query = request.GET.get('input_movie')
+        try:
+            url = "https://api.themoviedb.org/3/search/movie?api_key={key}&language=ko-KR&page={p}&query={query}".format(key=KEY, query=query, p=1)
+            response = requests.get(url).json()
+            total_pages = response['total_pages']
+            for page in range(2,total_pages):
+                url = "https://api.themoviedb.org/3/search/movie?api_key={key}&language=ko-KR&page={p}&query={query}".format(key=KEY, query=query, p=page)
+        except:
+            pass
+            
+        context = {'what':'no'}
+    return render(request, 'movies/main.html', context)
