@@ -66,6 +66,13 @@ def detail(request, movie_id):
         # 그 때 정참조할 땐 참조할 모델명이 아닌 현재 모델의 외래키를 넣어야 함. genre_id로.
     # movie_genres = Movie_Genre.objects.filter(movie_id=movie_id)[0]
     # genre = movie_genres.genre_id.name
+
+    genres = detail_response['genres']
+    for genre in genres:
+        try:
+            Movie_Genre.objects.create(id=movie_id+genre['id'], movie_id=Movie.objects.get(id=movie_id), genre_id=Genre.objects.get(id=genre['id']))
+        except: pass
+
     genre_list = []
     movie_genres = Movie_Genre.objects.filter(movie_id=movie_id)
     for movie_genre in movie_genres:
@@ -87,6 +94,20 @@ def detail(request, movie_id):
         original_name = movie_director.director_id.original_name
         director_list.append(director)
         oDirector_list.append(original_name)
+
+    credit = detail_response['credits']['cast'] 
+    keyValList = ['known_for_department', "Acting"]
+    actor = list(filter(lambda d: d['known_for_department'] in keyValList, credit))
+    for a in actor:
+        if (Actor.objects.filter(id=a['id'])):
+            Actor.objects.filter(id=a['id']).update(name=a['name'], character=a['character'])
+        else:
+            Actor.objects.create(id=a['id'], name=a['name'], character=a['character'])
+
+        try:
+            Movie_Actor.objects.create(id=movie_id+a['id'], movie_id=Movie.objects.get(id=movie_id), actor_id=Actor.objects.get(id=a['id']))
+        except:
+            pass
     
     actor_list = []
     movie_actors = Movie_Actor.objects.filter(movie_id=movie_id)[:4]
@@ -222,16 +243,103 @@ def learn(request):
     return render(request, 'movies/learn.html', context)
 
 def search(request):
+    
+    query = None
     if 'input_movie' in request.GET:
+        # return render(request, 'movies/error.html', {
+        #     'error_message': request.GET.get('input_movie')
+        # })
         query = request.GET.get('input_movie')
-        try:
-            url = "https://api.themoviedb.org/3/search/movie?api_key={key}&language=ko-KR&page={p}&query={query}".format(key=KEY, query=query, p=1)
+        url = "https://api.themoviedb.org/3/search/movie?api_key={key}&language=ko-KR&page={p}&query={query}".format(key=KEY, query=query, p=1)
+        response = requests.get(url).json()
+        total_pages = response['total_pages']
+
+        movies = response['results']
+        for movie in movies:
+            try:
+                bulk_list = []  
+                bulk_list.append(Movie(
+                id = movie['id'],
+                title = movie['title'],
+                original_title = movie['original_title'],
+                popularity = movie['popularity'],
+                vote_average = movie['vote_average'],
+                release_date = movie['release_date'],
+                overview = movie['overview'],
+                backdrop_path = movie['backdrop_path'],
+                poster_path = movie['poster_path'],
+                # video_path = video_path,
+                ))
+                try:
+                    Movie.objects.bulk_create(bulk_list)
+                except:
+                    pass
+
+                video_url = "https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key={key}&language=KR".format(movie_id=movie['id'], key=KEY)
+                video_response = requests.get(video_url).json()
+                try: video_path = video_response['results'][-1]['key']
+                except: pass
+
+                try:
+                    if (Movie.objects.get(id=movie['id'])):
+                        up = Movie.objects.get(id=movie['id'])
+                        up.video_path = video_path
+                        up.save()
+                except: pass
+            except:pass
+
+
+        for page in range(2,total_pages):
+            url = "https://api.themoviedb.org/3/search/movie?api_key={key}&language=ko-KR&page={p}&query={query}".format(key=KEY, query=query, p=page)
             response = requests.get(url).json()
-            total_pages = response['total_pages']
-            for page in range(2,total_pages):
-                url = "https://api.themoviedb.org/3/search/movie?api_key={key}&language=ko-KR&page={p}&query={query}".format(key=KEY, query=query, p=page)
-        except:
-            pass
-            
-        context = {'what':'no'}
-    return render(request, 'movies/main.html', context)
+            movies = response['results']
+
+            for movie in movies:
+                try:
+                    bulk_list = []  
+                    bulk_list.append(Movie(
+                    id = movie['id'],
+                    title = movie['title'],
+                    original_title = movie['original_title'],
+                    popularity = movie['popularity'],
+                    vote_average = movie['vote_average'],
+                    release_date = movie['release_date'],
+                    overview = movie['overview'],
+                    backdrop_path = movie['backdrop_path'],
+                    poster_path = movie['poster_path'],
+                    # video_path = video_path,
+                    ))
+                    try:
+                        Movie.objects.bulk_create(bulk_list)
+                    except:
+                        pass
+                        
+                    video_url = "https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key={key}&language=KR".format(movie_id=movie['id'], key=KEY)
+                    video_response = requests.get(video_url).json()
+                    try: video_path = video_response['results'][-1]['key']
+                    except: pass
+
+                    try:
+                        if (Movie.objects.get(id=movie['id'])):
+                            up = Movie.objects.get(id=movie['id'])
+                            up.video_path = video_path
+                            up.save()
+                    except: pass
+                except: pass
+
+
+    # popular_movie_list = Movie.objects.order_by('-popularity')[:send_list_len]
+        popular_movie_list = Movie.objects.all().filter(title__icontains=query).order_by('-popularity')
+        # popular_movie_list = bulk_list[:20]
+        context = {
+            # 'index_list': range(0, len(popular_movie_list))
+            'popular_movie_list': popular_movie_list,
+            'config': Configuration.objects.get(pk=1),
+        }
+        return render(request, 'movies/main.html', context)
+
+    else:
+        return render(request, 'movies/error.html', {
+            'error_message': "You didn't get a request"
+        })
+    
