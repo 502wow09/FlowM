@@ -5,27 +5,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlowM</title>
-
+    
+    {% load static %}
+    <script type="text/javascript" src="{% static 'movies/m_event.js' %}"></script>
     <script>
-        let last_selected_id = 0;
-        
-        function m_over(){
-            let thumnails = document.getElementsByClassName("thumnail");
-            for(let i=0, len=thumnails.length; i<len; i++){
-                thumnails[i].style.opacity="1";
-                thumnails[i].style.zIndex="1";
-            }
-        }
-
-        function m_out(){
-            let thumnails = document.getElementsByClassName("thumnail");
-            for(let i=0, len=thumnails.length; i<len; i++)
-                if( thumnails[i].id !== last_selected_id ){
-                    thumnails[i].style.opacity="0.4";
-                    thumnails[i].style.zIndex="0";
-                }
-        }
-
         function m_onclick(movie_id){
             if (last_selected_id === movie_id){
                 document.getElementById("a"+movie_id).href = "{% url 'movies:detail' 777 %}".replace(/777/, Number(movie_id));
@@ -75,7 +58,7 @@
                     scrollControl.scrollLeft += e.deltaY;
                 });
             </script>
-            <div id="genre" style="background-color: red;">
+            <div id="genre" style="background-color: none;">
             </div>
             {% for movie in popular_movie_list %}
             <!-- {{ forloop.counter0 }} -->

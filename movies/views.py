@@ -49,23 +49,22 @@ def main(request):
 
 
 def detail(request, movie_id):
-    detail_url = "https://api.themoviedb.org/3/movie/{movie_id}?api_key={key}&language=ko&append_to_response=keywords,credits,similar".format(movie_id=movie_id, key=KEY)
-    detail_response = requests.get(detail_url).json()
-    
-    selected_movie = Movie.objects.get(pk=movie_id)
     # 일단 필터로 movie id를 얻고. id가 일치하는 movie_genre값들을 얻고
-
-    #역참조 후 정참조
+    # 역참조 후 정참조?
     # m = Movie.objects.get(id=movie_id)
     # mg = m.movie_genre_set.all()  #_set에 오류남.
     # g = mg.genre.name
-
     
     # 되는 코드!!!!!!!!!!!!!
     # Movie_Genre에 id를 넣은 후, genre로 정참조함.
         # 그 때 정참조할 땐 참조할 모델명이 아닌 현재 모델의 외래키를 넣어야 함. genre_id로.
     # movie_genres = Movie_Genre.objects.filter(movie_id=movie_id)[0]
     # genre = movie_genres.genre_id.name
+
+    detail_url = "https://api.themoviedb.org/3/movie/{movie_id}?api_key={key}&language=ko&append_to_response=keywords,credits,similar".format(movie_id=movie_id, key=KEY)
+    detail_response = requests.get(detail_url).json()
+    
+    selected_movie = Movie.objects.get(pk=movie_id)
 
     genres = detail_response['genres']
     for genre in genres:
@@ -85,7 +84,6 @@ def detail(request, movie_id):
         keyword = movie_keyword.keyword_id.name
         keyword_list.append(keyword)
  
-
     director_list = []
     oDirector_list = []
     movie_directors = Movie_Director.objects.filter(movie_id=movie_id)
@@ -115,6 +113,40 @@ def detail(request, movie_id):
         actor = movie_actor.actor_id.name
         actor_list.append(actor)
 
+    similars_list = []
+    similar = detail_response['similar']['results']
+    for row in similar:
+        similar_list = []
+        similar_list.append(Movie(
+        id = row['id'],
+        title = row['title'],
+        original_title = row['original_title'],
+        popularity = row['popularity'],
+        vote_average = row['vote_average'],
+        release_date = row['release_date'],
+        overview = row['overview'],
+        backdrop_path = row['backdrop_path'],
+        poster_path = row['poster_path'],
+        # video_path = video_path,
+        ))
+        try:
+            Movie.objects.bulk_create(similar_list)
+        except:
+            pass
+
+        video_url = "https://api.themoviedb.org/3/movie/{movie_id}/videos?api_key={key}&language=KR".format(movie_id=row['id'], key=KEY)
+        video_response = requests.get(video_url).json()
+        try: video_path = video_response['results'][-1]['key']
+        except: pass
+        try:
+            if (Movie.objects.get(id=row['id'])):
+                up = Movie.objects.get(id=row['id'])
+                up.video_path = video_path
+                up.save()
+        except: pass
+
+        similars_list.append(Movie.objects.get(id=row['id']))
+
     context = {
         'selected_movie': selected_movie,
         'config': Configuration.objects.get(pk=1),
@@ -122,6 +154,7 @@ def detail(request, movie_id):
         'keywords' : " / ".join(keyword_list),
         'directors' : ", ".join(director_list),
         'actors' : ", ".join(actor_list),
+        'similar_list' : similars_list,
     }
     return render(request, 'movies/detail.html', context)
 

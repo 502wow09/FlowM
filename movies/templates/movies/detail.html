@@ -5,28 +5,41 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FlowM</title>
+
+    {% load static %}
+    <script type="text/javascript" src="{% static 'movies/m_event.js' %}"></script>
+    <script>
+        function m_onclick(movie_id){
+            if (last_selected_id === movie_id){
+                document.getElementById("a"+movie_id).href = "{% url 'movies:detail' 777 %}".replace(/777/, Number(movie_id));
+            }
+            else if (last_selected_id === 0){
+                last_selected_id = movie_id;
+            }
+            let last_selected_movie = document.getElementById(last_selected_id);
+            last_selected_movie.style.transform="scale(1.0)";
+            last_selected_movie.style.border="none";
+
+            last_selected_id = movie_id;
+            let now_selected_movie = document.getElementById(movie_id);
+            now_selected_movie.style.transform="scale(1.2)";
+            now_selected_movie.style.border="5px solid white";
+            now_selected_movie.style.opacity="1";
+            document.getElementById("video_iframe").src = "https://www.youtube.com/embed/777?"+
+            "autoplay=1&disablekb=1&controls=0&fs=0&loop=1&&playlist=777&modestbranding=1&mute=1"
+            .replace(/777/, document.getElementById("v"+movie_id).innerText)
+        }
+    </script>
 </head>
 <body>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
     <div class="fullscreen" id="backdrop_position">
         {% if selected_movie %}
+        <!-- + -->
         <div class="fullscreen" id="backdrop">
-            <img class="fullscreen" src="https://image.tmdb.org/t/p/{{ config.backdrop_size }}/{{ selected_movie.backdrop_path }}">
+            <img class="fullscreen" src="https://image.tmdb.org/t/p/{{ config.backdrop_size }}/{{ selected_movie.backdrop_path }}" style="position:absolute">
         </div>
-
-        <header>
-            <div class="brand_div" onclick="location.href='/'">
-                <h1 class='brand'>FlowM</h1>
-            </div>
-            <div class="input_div">
-                <form action="{% url 'movies:search' %}" method="GET">
-                    {% csrf_token %}
-                    <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
-                    <input type="submit" value="Q">
-                </form>
-            </div>
-        </header>
 
         <div class="contents">
             <div style="padding:10px; width:auto; height:40%">
@@ -51,19 +64,54 @@
             </div>
         </div>
         {% endif %}
+
+        <iframe class="fullscreen" id='video_iframe' type="text/html" src="" width="100%" height="100%" frameborder="0" allowfullscreen style="position:absolute"></iframe>
+
+        <div id="footer" onmouseover="m_over()" onmouseout="m_out()" >
+            <script type="text/javascript">
+                const scrollControl = document.querySelector('#footer');
+                scrollControl.addEventListener('wheel', function(e){
+                    scrollControl.scrollLeft += e.deltaY;
+                });
+            </script>
+            <div id="genre" style="background-color: none;">
+            </div>
+            {% if similar_list %}
+                {% for movie in similar_list %}
+                <!-- {{ forloop.counter0 }} -->
+                        <div class="thumnails" id="{{ movie.id }}" onclick="m_onclick(this.id);">
+                            <a class="thumnail" id="a{{ movie.id }}">
+                                <img class="thumnail_img" src="https://image.tmdb.org/t/p/{{ config.thumbnail_size }}/{{ movie.poster_path }}" 
+                                alt="thumbnails"; onerror="this.src='/images/no_image.jpg'"; loading="lazy";>    
+                            </a>
+                            <div class="uptext">                 
+                                <li>{{ movie.title }}</li>
+                                <li></li>
+                                <li style="border-radius: 2em;border: 2px solid white;height:25px;margin-top:10px;margin-left:10px;margin-right:10px;padding-top:2px;padding-bottom:2px;">{{ movie.vote_average }}</li>
+                                <div id="v{{ movie.id }}" style="opacity:0;">
+                                    {{ movie.video_path }}
+                                </div>
+                            </div> 
+                        </div> 
+                {% endfor %}
+            {% else %}
+                <p>No movies</p>
+            {% endif %}
+        </div>
+
+        <header>
+            <div class="brand_div" onclick="location.href='/'">
+                <h1 class='brand'>FlowM</h1>
+            </div>
+            <div class="input_div">
+                <form action="{% url 'movies:search' %}" method="GET">
+                    {% csrf_token %}
+                    <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
+                    <input type="submit" value="Q">
+                </form>
+            </div>
+        </header>
     </div>
-    <script type="text/javascript">
-        function vote_gage_event(vote_average){
-            vote_average = vote_average*10;
-            if ( vote_average < 50.0 )
-                document.getElementById("vote_gage_bar").style.backgroundColor = "red";
-            else
-                document.getElementById("vote_gage_bar").style.backgroundColor = "rgb(47, 255, 28)";
-            vote_average = String(vote_average)+'%';
-            
-            document.getElementById("vote_gage_bar").style.width = vote_average;
-        };
-        window.onload = vote_gage_event("{{ selected_movie.vote_average }}");
-    </script>
+
 </body>
 </html>
