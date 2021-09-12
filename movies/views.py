@@ -268,7 +268,7 @@ def learn(request):
 
             for row in similar:
                 try:
-                    Similar.objects.create(id=r['id']+row['id'] ,movie_id=Movie.objects.get(id=r['id']), recommand_id=row['id'])
+                    Similar.objects.create(recommand_id=Movie.objects.get(id=r['id']), search_id=row['id'])
                 except:
                     pass
 

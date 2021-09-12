@@ -14,8 +14,8 @@ class Movie(models.Model):
     video_path = models.TextField()
 
 class Similar(models.Model):
-    search_id = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    recommand_id = models.IntegerField(default=0)
+    recommand_id = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    search_id = models.IntegerField(default=0)
 
 class Configuration(models.Model):
     thumbnail_size = models.CharField(max_length=5) #'w185'

@@ -112,6 +112,18 @@
             </div>
         </header>
     </div>
-
+    <script>
+        function vote_gage_event(vote_average){
+            vote_average = vote_average*10;
+            if ( vote_average < 50.0 )
+                document.getElementById("vote_gage_bar").style.backgroundColor = "red";
+            else
+                document.getElementById("vote_gage_bar").style.backgroundColor = "rgb(47, 255, 28)";
+            vote_average = String(vote_average)+'%';
+            
+            document.getElementById("vote_gage_bar").style.width = vote_average;
+        };
+        window.onload = vote_gage_event("{{ selected_movie.vote_average }}");
+    </script>
 </body>
 </html>
