@@ -35,7 +35,6 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
     <div class="fullscreen">
-
         <header>
             <div class="brand_div" onclick="location.href='/'">
                 <h1 class='brand'>FlowM</h1>
@@ -44,7 +43,7 @@
                 <form action="{% url 'movies:search' %}" method="GET">
                     {% csrf_token %}
                     <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
-                    <input type="submit" value="Q">
+                    <input type="submit" value="Q" style="cursor:pointer">
                 </form>
             </div>
         </header>

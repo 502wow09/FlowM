@@ -78,20 +78,26 @@ def detail(request, movie_id):
         genre = movie_genre.genre_id.name
         genre_list.append(genre)
 
+    keywords = detail_response['keywords']['keywords']
+    for keyword in keywords:
+        try:
+            Movie_Keyword.objects.create(id=10000*movie_id+keyword['id'], movie_id=Movie.objects.get(id=movie_id), keyword_id=Keyword.objects.get(id=keyword['id']))
+        except: pass
+
     keyword_list = []
     movie_keywords = Movie_Keyword.objects.filter(movie_id=movie_id)
     for movie_keyword in movie_keywords:
         keyword = movie_keyword.keyword_id.name
         keyword_list.append(keyword)
  
-    director_list = []
-    oDirector_list = []
-    movie_directors = Movie_Director.objects.filter(movie_id=movie_id)
-    for movie_director in movie_directors:
-        director = movie_director.director_id.name
-        original_name = movie_director.director_id.original_name
-        director_list.append(director)
-        oDirector_list.append(original_name)
+    # director_list = []
+    # oDirector_list = []
+    # movie_directors = Movie_Director.objects.filter(movie_id=movie_id)
+    # for movie_director in movie_directors:
+    #     director = movie_director.director_id.name
+    #     original_name = movie_director.director_id.original_name
+    #     director_list.append(director)
+    #     oDirector_list.append(original_name)
 
     credit = detail_response['credits']['cast'] 
     keyValList = ['known_for_department', "Acting"]
@@ -145,14 +151,16 @@ def detail(request, movie_id):
                 up.save()
         except: pass
 
-        similars_list.append(Movie.objects.get(id=row['id']))
+        try:
+            similars_list.append(Movie.objects.get(id=row['id']))
+        except: pass
 
     context = {
         'selected_movie': selected_movie,
         'config': Configuration.objects.get(pk=1),
         'genres' : genre_list,
         'keywords' : " / ".join(keyword_list),
-        'directors' : ", ".join(director_list),
+        # 'directors' : ", ".join(director_list),
         'actors' : ", ".join(actor_list),
         'similar_list' : similars_list,
     }
@@ -275,8 +283,7 @@ def learn(request):
     context = { 'state': 'Done.' }
     return render(request, 'movies/learn.html', context)
 
-def search(request):
-    
+def search(request): 
     query = None
     if 'input_movie' in request.GET:
         # return render(request, 'movies/error.html', {
@@ -359,7 +366,6 @@ def search(request):
                             up.save()
                     except: pass
                 except: pass
-
 
     # popular_movie_list = Movie.objects.order_by('-popularity')[:send_list_len]
         popular_movie_list = Movie.objects.all().filter(title__icontains=query).order_by('-popularity')

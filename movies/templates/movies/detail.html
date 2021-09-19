@@ -60,7 +60,7 @@
                 <!-- <p>감독 : {{ directors }}</p> -->
                 <p>배우 : {{ actors }}</p>
                 <p>{{ selected_movie.overview }}</p>
-                <!-- <p>키워드 : {{ keywords }}</p> -->
+                <p>키워드 : {{ keywords }}</p>
             </div>
         </div>
         {% endif %}
@@ -107,7 +107,7 @@
                 <form action="{% url 'movies:search' %}" method="GET">
                     {% csrf_token %}
                     <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
-                    <input type="submit" value="Q">
+                    <input type="submit" value="Q" style="cursor:pointer">
                 </form>
             </div>
         </header>
@@ -115,7 +115,7 @@
     <script>
         function vote_gage_event(vote_average){
             vote_average = vote_average*10;
-            if ( vote_average < 50.0 )
+            if ( vote_average < 60.0 )
                 document.getElementById("vote_gage_bar").style.backgroundColor = "red";
             else
                 document.getElementById("vote_gage_bar").style.backgroundColor = "rgb(47, 255, 28)";
