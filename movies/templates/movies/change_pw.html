@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <div class="login_container">
+			<div class="error_message">
+            {% if error %}
+                {{ error }}
+            {% endif %}
+            </div>
+            <div class="login_title">
+                Change Password
+            </div>
+            <form method="POST" action="{% url 'movies:change_pw' %}" class="login_form">
+                {% csrf_token %}
+                <div class="login_input_container">
+                    <div class="username_form_text">Origin Password</div>
+                    <div class="input_container">
+                        <input class="login_input" name="origin_password" type="password">
+                    </div>
+
+                    <div class="password_form_text"> New Password</div>
+                    <div class="input_container">
+                        <input class="login_input" name="password1" type="password">
+                    </div>
+                    <div class="confirm_password_form_text">Confirm Password</div>
+                    <div class="input_container">
+                        <input class="login_input" name="password2" type="password">
+                    </div>
+                </div>
+                <div class="login_btn_container">
+                    <input type="submit" class="login_btn" value="Submit">
+                </div>
+        </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,7 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 import requests, json
-from movies.models import Movie, Configuration, Genre, Movie_Genre, Keyword, Movie_Keyword, Director, Actor, Movie_Director, Movie_Actor
+from movies.models import Movie, Configuration, Genre, Movie_Genre, Keyword, Movie_Keyword, Director, Actor, Movie_Director, Movie_Actor, Likes
 from django.shortcuts import get_object_or_404
+
+from .forms import UserForm, LoginForm
+from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth.hashers import check_password
+from django.contrib.auth.decorators import login_required
 
 KEY="689125aca44db2c4475bb17c79fc8ff4"
 
@@ -382,3 +388,83 @@ def search(request):
             'error_message': "You didn't get a request"
         })
     
+def signup(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            new_user = User.objects.create_user(**form.cleaned_data)
+            login(request, new_user)
+            return redirect('movies:signin')
+        if not form.is_valid():
+            form = UserForm()
+            return render(request, 'movies/signup.html', {'form':form})
+    else:
+        form = UserForm()
+        return render(request, 'movies/signup.html', {'form':form})
+
+def signin(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username = username, password = password)
+        if user is not None:
+            login(request, user)
+            return redirect('movies:main')
+        if user is None:
+            context = {'form':form, 'error':"로그인 실패. 계정 정보가 없습니다."}
+            return render(request, 'movies/signin.html', context)
+    else:
+        form = LoginForm()
+        return render(request, 'movies/signin.html', {'form':form})
+
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('movies:main')
+
+@login_required
+def userinfo(request):
+    user = User.objects.get(username=request.user)
+    likes = Likes.objects.filter(user_id=user)
+    # for like in likes:
+    #     Movie_Genre.objects.filter(movie_id=Movie.objects.get(id=like.movie_id))
+    #     Movie_Keyword.objects.filter(movie_id=Movie.objects.get(id=like.movie_id))
+    return render(request, 'movies/userinfo.html')
+
+@login_required
+def change_pw(request):
+    context= {}
+    if request.method == "POST":
+        current_password = request.POST.get("origin_password")
+        user = request.user
+        if check_password(current_password, user.password):
+            new_password = request.POST.get("password1")
+            password_confirm = request.POST.get("password2")
+            if new_password == password_confirm:
+                user.set_password(new_password)
+                user.save()
+                login(request,user)
+                return redirect("movies:userinfo")
+            else:
+                context.update({'error':"새로운 비밀번호를 다시 확인해주세요."})
+        else:
+            context.update({'error':"현재 비밀번호가 일치하지 않습니다."})
+    return render(request, "movies/change_pw.html", context)
+
+@login_required
+def like(request, movie_id):
+    user = User.objects.get(username=request.user)
+
+    if Likes.objects.filter(user_id=user, movie_id=movie_id):
+        Likes.objects.filter(user_id=user, movie_id=movie_id).delete()
+        on_like=0
+    else:
+        Likes.objects.create(user_id=user, movie_id=movie_id)
+        on_like=1
+    # return render(request, 'movies/ex.html', {'user':user, 'movie_id':movie_id, 'on':on_like})
+    return redirect('movies:detail', movie_id)
+
+
+
+

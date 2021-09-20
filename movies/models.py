@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import User
+
 
 # Create your models here.
 class Movie(models.Model):
@@ -12,6 +14,9 @@ class Movie(models.Model):
     backdrop_path = models.TextField()
     poster_path = models.TextField()
     video_path = models.TextField()
+
+    def __str__(self):
+        return self.title
 
 class Similar(models.Model):
     recommand_id = models.ForeignKey(Movie, on_delete=models.CASCADE)
@@ -29,10 +34,6 @@ class Genre(models.Model):
 class Movie_Genre(models.Model):
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='movie_genre')
     genre_id = models.ForeignKey(Genre, on_delete=models.CASCADE, related_name='movie_genre')
-
-class User(models.Model):
-    id = models.IntegerField(default=0, primary_key=True)
-    nickname = models.CharField(max_length=10)
 
 class Keyword(models.Model):
     id = models.IntegerField(default=0, primary_key=True)
@@ -60,9 +61,9 @@ class Movie_Actor(models.Model):
     movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='movie_actor')
     actor_id = models.ForeignKey(Actor, on_delete=models.CASCADE, related_name='movie_actor')    
     
-class Movie_user(models.Model):
-    movie_id = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='user_movie', blank=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_movie', blank=True)
+class Likes(models.Model):
+    user_id = models.ForeignKey(User, on_delete = models.CASCADE)
+    movie_id = models.IntegerField(default=0)
 
 class User_Keyword(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_keyword')
@@ -73,4 +74,5 @@ class Comment(models.Model):
     comment = models.TextField()
     created_at = models.DateTimeField('date created')
     updated_at = models.DateTimeField('date updated')
+
 

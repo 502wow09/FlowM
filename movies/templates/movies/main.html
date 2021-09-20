@@ -46,6 +46,21 @@
                     <input type="submit" value="Q" style="cursor:pointer">
                 </form>
             </div>
+            <div class="account">
+                {% if user.is_active %}
+                <tr>
+                    <td><a href="{% url 'movies:userinfo' %}">{{ user.username }}</a></td>
+                    <td>dddd</td>
+                    <td><a href="{% url 'movies:logout' %}">로그아웃</a></td>
+                </tr>
+                <tr>
+                    {% else %}
+                    <td><a href="{% url 'movies:signin' %}">로그인</a></td>
+                    <td>dddd</td>
+                    <td><a href="{% url 'movies:signup' %}">회원가입</a></td>
+                    {% endif %}
+                </tr>
+            </div>
         </header>
 
     {% if popular_movie_list %}

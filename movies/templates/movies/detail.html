@@ -45,22 +45,28 @@
             <div style="padding:10px; width:auto; height:40%">
                 <img style="width:auto; height:auto;"src="https://image.tmdb.org/t/p/{{ config.poster_size }}/{{ selected_movie.poster_path }}">
             </div>
-            <div style="padding:10px; padding-left:30px; color:white">
+            <div style="padding-left:30px; color:white">
                 <h1>{{ selected_movie.title }}</h1>
                 <p>original title : {{ selected_movie.original_title }} ( {{ selected_movie.release_date }} )</p>
 
                 <div id="vote_gage">
                     <div id="vote_gage_bar">
                     </div>
-                    <div style="position:absolute;width:200px; text-align:center;">
+                    <div style="position:absolute;width:200px; text-align:center;font-weight:bold;">
                         {{ selected_movie.vote_average }}
                     </div>
                 </div>
-                <p>장르 : {% for genre in genres %} {{ genre }} {% endfor %}</p>
+                
+                <div style="padding:10px;padding-left:0;height:25px;">
+                    {% for genre in genres %} 
+                    <div style="float:left;border:2px solid snow;border-radius:10px;;padding:3px;margin:5px;background-color:black;font-weight: bold;font-size: large;">{{ genre }}</div>
+                    {% endfor %}
+                </div>
                 <!-- <p>감독 : {{ directors }}</p> -->
                 <p>배우 : {{ actors }}</p>
                 <p>{{ selected_movie.overview }}</p>
                 <p>키워드 : {{ keywords }}</p>
+                <a style="color:violet" href="{% url 'movies:like' selected_movie.id %}">♥dddd</a>
             </div>
         </div>
         {% endif %}
@@ -118,7 +124,7 @@
             if ( vote_average < 60.0 )
                 document.getElementById("vote_gage_bar").style.backgroundColor = "red";
             else
-                document.getElementById("vote_gage_bar").style.backgroundColor = "rgb(47, 255, 28)";
+                document.getElementById("vote_gage_bar").style.backgroundColor = "rgb(0, 204, 0)";
             vote_average = String(vote_average)+'%';
             
             document.getElementById("vote_gage_bar").style.width = vote_average;
