@@ -9,18 +9,37 @@
     <link rel="stylesheet" type="text/css" href="{% static 'movies/accountStyle.css' %}">
 </head>
 <body>
-    <h2>회원가입</h2>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
+    <div class="fullscreen" style="position: fixed; background-color:rgb(46, 46, 46);">
+    <header>
+        <div class="brand_div" onclick="location.href='/'">
+            <h1 class='brand'>FlowM</h1>
+        </div>
+        <div class="input_div">
+            <form action="{% url 'movies:search' %}" method="GET">
+                {% csrf_token %}
+                <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
+                <input class="button_search" type="submit" value="Q" style="cursor:pointer">
+            </form>
+        </div>
+    </header>
+
+
+
+    <div class="container">
+    <h2 class="container_h">회원가입</h2>
     <form method="post" action="">
         {% csrf_token %}
-        <table>
+        <table class="account_info">
             <tr>
                 <td>{{ form.username.label_tag}}</td>
                 <td>{{ form.username }}</td>
-                <td>150자 이하 문자, 숫자 그리고 @.+-_만 가능합니다.</td>
                 <!-- Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only. -->
             </tr>
+            <p style="font-size: 10px; font-weight: bold; float:right; color:white; margin-right:90px;">※ 150자 이하 문자, 숫자 그리고 @.+-_만 가능합니다.</p>
             <tr>
-                <td>{{ form.email.label_tag}}</td>
+                <td>Email:</td>
                 <td>{{ form.email }}</td>
             </tr>
             <tr>
@@ -28,7 +47,15 @@
                 <td>{{ form.password }}</td>
             </tr>
         </table> 
-        <input type="submit" value="회원가입"/>
+        <input class="a_submit" type="submit" value="회원가입"/>
+        <div  class="a_submit" style="border:none; margin-right:10px; margin-top:25px;"><a style="width:120px; height:50px; color:white; font-size:17px; margin-top:13px" href="{% url 'movies:signin' %}">로그인 창으로</a></div>
+        {% if error %}
+        <p class="a_submit" style="border:none; width:200px; font-size:18px; cursor: none;">
+            {{ error }}
+        </p>
+        {% endif %}
     </form>
+    </div>
+    </div>
 </body>
 </html>

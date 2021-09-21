@@ -9,10 +9,29 @@
     <link rel="stylesheet" type="text/css" href="{% static 'movies/accountStyle.css' %}">
 </head>
 <body>
-    <h2>로그인</h2>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
+    <div class="fullscreen" style="position: fixed; background-color:rgb(46, 46, 46);">
+    <header>
+        <div class="brand_div" onclick="location.href='/'">
+            <h1 class='brand'>FlowM</h1>
+        </div>
+        <div class="input_div">
+            <form action="{% url 'movies:search' %}" method="GET">
+                {% csrf_token %}
+                <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
+                <input class="button_search" type="submit" value="Q" style="cursor:pointer">
+            </form>
+        </div>
+    </header>
+
+
+
+    <div class="container">
+    <h2 class="container_h">로그인</h2>
     <form method="post" action="">
         {% csrf_token %}
-        <table>
+        <table class="account_info">
             <tr>
                 <td>{{ form.username.label_tag}}</td>
                 <td>{{ form.username }}</td>
@@ -22,11 +41,16 @@
                 <td>{{ form.password }}</td>
             </tr>
         </table> 
-        <input type="submit" value="로그인"/>
-        <a href="{% url 'movies:signup' %}">회원가입</a>
+        <input class="a_submit" type="submit" value="로그인"/>
+        <div class="a_submit" style="border:none; width: 40px; margin-top:25px;"><a style="width:120px; height:50px; color:white; font-size:17px; margin-top:13px" href="{% url 'movies:signup' %}">계정 생성하기</a></div>
     </form>
     {% if error %}
+    <p class="a_submit" style="border:none; width:200px; font-size:18px; cursor: none;"></p>
         {{ error }}
+    </p>
     {% endif %}
+    </div>
+    </div>
+
 </body>
 </html>

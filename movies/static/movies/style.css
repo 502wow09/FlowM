@@ -39,6 +39,32 @@ header{
     color: #C6D6F7;
 }
 
+.account{
+    position: fixed;
+    display: inline-block;
+    right: 0;
+
+    height: 56px;
+    width: 250px;
+
+    font-size: large;
+    font-weight: bold;
+    background-color: black;
+    border-radius: 0 0 0 1em;
+
+    text-align: center;
+}
+
+.userinfo{
+    position: relative;
+    text-decoration:none;
+
+    color:white;
+    top:14px;
+    margin-left:15px;
+    margin-right:15px;
+}
+
 .input_div{
     height: inherit;
     width: 470px;
@@ -52,7 +78,10 @@ header{
     align-items: center;
     justify-content: center;
 }
-input[type="text"]{
+/* input[type="text"] */
+/* input[type="password"] */
+/* input[type="submit"] */
+.input_text{
     width: 400px;
     height: 50px;
     background-color : black; 
@@ -61,7 +90,8 @@ input[type="text"]{
     font-weight: bold;
     border: none;
 }
-input[type="submit"]{
+
+.button_search{
     width: 40px;
     height: 40px;
     background-color:black;
@@ -197,3 +227,70 @@ li{
 
     background-color: rgb(47, 255, 28);
 }
+
+.container{
+    background-color: black;
+    border: solid 1px black;
+    width: 30%;
+    height: 70%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    border-radius: 1em 1em 1em 1em;
+}
+.container_h{
+    text-align: center;
+    margin-top:15%;
+    color:white;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.account_info{
+    /* background-color:    lavender; */
+    margin: auto;
+    text-align: right;
+    color:white;
+    font-size: x-large;
+    font-weight: bold;
+}
+
+.a_submit{
+    float:right;
+    margin-top: 20px;
+    margin-right:90px;
+    text-align: auto;
+    width: 120px;
+    height: 40px;
+    background-color: black;
+    color:white;
+    font-size:25px;
+    font-weight: bolder;
+    border:none;
+    cursor: pointer;
+    border: solid 2px white;
+    border-radius: 5px 5px 5px 5px;
+}
+
+#id_username, #id_email, #id_password{
+    width: 200px;
+    height: 40px;
+    background-color : black; 
+    color:white;
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    box-shadow: inset 0 -2px white;
+}
+
+/* 
+width: 400px;
+height: 50px;
+background-color : black; 
+color:white;
+font-size: x-large;
+font-weight: bold;
+border: none; 
+*/

@@ -7,9 +7,49 @@
     <title>Document</title>
 </head>
 <body>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
+    <div class="fullscreen" style="position: fixed;">
+    <header>
+        <div class="brand_div" onclick="location.href='/'">
+            <h1 class='brand'>FlowM</h1>
+        </div>
+        <div class="input_div">
+            <form action="{% url 'movies:search' %}" method="GET">
+                {% csrf_token %}
+                <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
+                <input class="button_search" type="submit" value="Q" style="cursor:pointer">
+            </form>
+        </div>
+    </header>
+    <div class="account">
+        {% if user.is_active %}
+            <a class="userinfo" href="{% url 'movies:userinfo' %}">{{ user.username }}</a>
+            <a class="userinfo" href="{% url 'movies:logout' %}">로그아웃</a>
+        {% else %}
+            <a class="userinfo" href="{% url 'movies:signin' %}">로그인</a>
+            <a class="userinfo" href="{% url 'movies:signup' %}">회원가입</a>
+        {% endif %}
+    </div>
+
+
+    <div>
     name : {{ user.username }}<br>
     email : {{ user.email }}<br>
-    <a href="{% url 'movies:change_pw' %}">비밀번호 변경</a><br>
-    like movies
+    <a style="width:110px; height:20px;"href="{% url 'movies:change_pw' %}">비밀번호 변경</a><br>
+    </div>
+    like movies : 
+    {% for like in likes %}
+        {{like}}<br>
+        {{like.poster_path}}<br>
+    {% endfor %}
+    <br>
+    recommand movies :
+    {% for reco in recos %}
+        {{reco}}
+    {% endfor %}
+
+
+    </div>
 </body>
 </html>

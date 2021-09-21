@@ -113,10 +113,19 @@
                 <form action="{% url 'movies:search' %}" method="GET">
                     {% csrf_token %}
                     <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
-                    <input type="submit" value="Q" style="cursor:pointer">
+                    <input class="button_search" type="submit" value="Q" style="cursor:pointer">
                 </form>
             </div>
         </header>
+        <div class="account">
+            {% if user.is_active %}
+                <a class="userinfo" href="{% url 'movies:userinfo' %}">{{ user.username }}</a>
+                <a class="userinfo" href="{% url 'movies:logout' %}">로그아웃</a>
+            {% else %}
+                <a class="userinfo" href="{% url 'movies:signin' %}">로그인</a>
+                <a class="userinfo" href="{% url 'movies:signup' %}">회원가입</a>
+            {% endif %}
+        </div>
     </div>
     <script>
         function vote_gage_event(vote_average){

@@ -43,25 +43,19 @@
                 <form action="{% url 'movies:search' %}" method="GET">
                     {% csrf_token %}
                     <input class="input_text" type="text" name="input_movie" value="" placeholder="Search">
-                    <input type="submit" value="Q" style="cursor:pointer">
+                    <input class="button_search" type="submit" value="Q" style="cursor:pointer">
                 </form>
             </div>
-            <div class="account">
-                {% if user.is_active %}
-                <tr>
-                    <td><a href="{% url 'movies:userinfo' %}">{{ user.username }}</a></td>
-                    <td>dddd</td>
-                    <td><a href="{% url 'movies:logout' %}">로그아웃</a></td>
-                </tr>
-                <tr>
-                    {% else %}
-                    <td><a href="{% url 'movies:signin' %}">로그인</a></td>
-                    <td>dddd</td>
-                    <td><a href="{% url 'movies:signup' %}">회원가입</a></td>
-                    {% endif %}
-                </tr>
-            </div>
         </header>
+        <div class="account">
+            {% if user.is_active %}
+                <a class="userinfo" href="{% url 'movies:userinfo' %}">{{ user.username }}</a>
+                <a class="userinfo" href="{% url 'movies:logout' %}">로그아웃</a>
+            {% else %}
+                <a class="userinfo" href="{% url 'movies:signin' %}">로그인</a>
+                <a class="userinfo" href="{% url 'movies:signup' %}">회원가입</a>
+            {% endif %}
+        </div>
 
     {% if popular_movie_list %}
     <iframe class="fullscreen" id='video_iframe' type="text/html" src="https://www.youtube.com/embed/{{ popular_movie_list.0.video_path }}?autoplay=1&disablekb=1&controls=0&fs=0&loop=1&&playlist={{ popular_movie_list.0.video_path }}&modestbranding=1&mute=1&color=white" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>

@@ -9,6 +9,8 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.decorators import login_required
 
+import pandas as pd
+
 KEY="689125aca44db2c4475bb17c79fc8ff4"
 
 # Create your views here.
@@ -289,6 +291,8 @@ def learn(request):
     context = { 'state': 'Done.' }
     return render(request, 'movies/learn.html', context)
 
+
+
 def search(request): 
     query = None
     if 'input_movie' in request.GET:
@@ -397,7 +401,8 @@ def signup(request):
             return redirect('movies:signin')
         if not form.is_valid():
             form = UserForm()
-            return render(request, 'movies/signup.html', {'form':form})
+            context = {'form':form, 'error':"이미 있는 계정입니다."}
+            return render(request, 'movies/signup.html', context)
     else:
         form = UserForm()
         return render(request, 'movies/signup.html', {'form':form})
@@ -426,11 +431,58 @@ def logout_view(request):
 @login_required
 def userinfo(request):
     user = User.objects.get(username=request.user)
-    likes = Likes.objects.filter(user_id=user)
+    likes = Likes.objects.filter(user_id=user).values('movie_id')
+
+
+    #머신러닝
+    data = list(Movie_Genre.objects.all().values('movie_id', 'genre_id'))
+    df = pd.DataFrame(data)
+    df['genre_id'] = df['genre_id'].apply(str)
+    df = df.groupby('movie_id')['genre_id'].apply(' '.join).reset_index()
+
+    from sklearn.feature_extraction.text import CountVectorizer
+    count_vector = CountVectorizer(ngram_range=(1,3))
+    vector_genres = count_vector.fit_transform(df['genre_id'])
+
+    from sklearn.metrics.pairwise import cosine_similarity
+    cos_sim = cosine_similarity(vector_genres, vector_genres).argsort()[:, ::-1]
+
+    like_movies = []
+    recommand_movies = []
+    for like in likes:
+        movie = Movie.objects.get(id=like['movie_id'])
+        like_movies.append(movie)
+
+        target = df[ df['movie_id']==like['movie_id'] ].index.values
+        reco_movies = cos_sim[target, :4].reshape(-1)
+        reco_movies = reco_movies[reco_movies != target]
+        reco_movies = df.iloc[reco_movies].values
+        
+        for reco in reco_movies:
+            recommand_movies.append(Movie.objects.get(id=reco[0]))
+    
     # for like in likes:
     #     Movie_Genre.objects.filter(movie_id=Movie.objects.get(id=like.movie_id))
     #     Movie_Keyword.objects.filter(movie_id=Movie.objects.get(id=like.movie_id))
-    return render(request, 'movies/userinfo.html')
+    content = {'likes':like_movies, 'recos':recommand_movies}
+    return render(request, 'movies/userinfo.html', content )
+
+
+def mgdf(request):
+    data = list(Movie_Genre.objects.all().values('movie_id', 'genre_id'))
+    df = pd.DataFrame(data)
+    df['genre_id'] = df['genre_id'].apply(str)
+    df = df.groupby('movie_id')['genre_id'].apply(' '.join).reset_index()
+
+    from sklearn.feature_extraction.text import CountVectorizer
+    count_vector = CountVectorizer(ngram_range=(1,3))
+    vector_genres = count_vector.fit_transform(df['genre_id'])
+
+    from sklearn.metrics.pairwise import cosine_similarity
+    cos_sim = cosine_similarity(vector_genres, vector_genres).argsort()[:, ::-1]
+
+    context = { 'state': 'Done.', 'df': cos_sim.shape }
+    return render(request, 'movies/learn.html', context)
 
 @login_required
 def change_pw(request):
