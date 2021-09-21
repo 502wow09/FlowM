@@ -10,6 +10,7 @@
     <script type="text/javascript" src="{% static 'movies/m_event.js' %}"></script>
     <script>
         function m_onclick(movie_id){
+            document.getElementById("like").style.zIndex=0;
             if (last_selected_id === movie_id){
                 document.getElementById("a"+movie_id).href = "{% url 'movies:detail' 777 %}".replace(/777/, Number(movie_id));
             }
@@ -27,7 +28,7 @@
             now_selected_movie.style.opacity="1";
             document.getElementById("video_iframe").src = "https://www.youtube.com/embed/777?"+
             "autoplay=1&disablekb=1&controls=0&fs=0&loop=1&&playlist=777&modestbranding=1&mute=1"
-            .replace(/777/, document.getElementById("v"+movie_id).innerText)
+            .replace(/777/, document.getElementById("v"+movie_id).innerText);
         }
     </script>
 </head>
@@ -40,38 +41,43 @@
         <div class="fullscreen" id="backdrop">
             <img class="fullscreen" src="https://image.tmdb.org/t/p/{{ config.backdrop_size }}/{{ selected_movie.backdrop_path }}" style="position:absolute">
         </div>
-
+    <div class="fullscreen" style="position: fixed;">
         <div class="contents">
-            <div style="padding:10px; width:auto; height:40%">
+            <div style="padding:10px; width:auto; height:40%; ">
                 <img style="width:auto; height:auto;"src="https://image.tmdb.org/t/p/{{ config.poster_size }}/{{ selected_movie.poster_path }}">
             </div>
-            <div style="padding-left:30px; color:white">
-                <h1>{{ selected_movie.title }}</h1>
-                <p>original title : {{ selected_movie.original_title }} ( {{ selected_movie.release_date }} )</p>
+            <div>
+                <div style="padding-left:30px; color:white;">
+                    <h1>{{ selected_movie.title }}</h1>
+                    <p>original title : {{ selected_movie.original_title }} ( {{ selected_movie.release_date }} )</p>
 
-                <div id="vote_gage">
-                    <div id="vote_gage_bar">
+                    <div id="vote_gage">
+                        <div id="vote_gage_bar">
+                        </div>
+                        <div style="position:absolute;width:200px; text-align:center;font-weight:bold;">
+                            {{ selected_movie.vote_average }}
+                        </div>
+                        <div id="like">
+                            <a id="like_{{on_like}}" class="like_a" href="{% url 'movies:like' selected_movie.id %}">♥</a>
+                        </div>
                     </div>
-                    <div style="position:absolute;width:200px; text-align:center;font-weight:bold;">
-                        {{ selected_movie.vote_average }}
+
+                    
+                    <div style="padding:10px;padding-left:0;height:25px;">
+                        {% for genre in genres %} 
+                        <div style="float:left;border:2px solid snow;border-radius:10px;;padding:3px;margin:5px;background-color:black;font-weight: bold;font-size: large;">{{ genre }}</div>
+                        {% endfor %}
                     </div>
+                    <!-- <p>감독 : {{ directors }}</p> -->
+                    <p>배우 : {{ actors }}</p>
+                    <p>{{ selected_movie.overview }}</p>
+                    <p>키워드 : {{ keywords }}</p>          
                 </div>
-                
-                <div style="padding:10px;padding-left:0;height:25px;">
-                    {% for genre in genres %} 
-                    <div style="float:left;border:2px solid snow;border-radius:10px;;padding:3px;margin:5px;background-color:black;font-weight: bold;font-size: large;">{{ genre }}</div>
-                    {% endfor %}
-                </div>
-                <!-- <p>감독 : {{ directors }}</p> -->
-                <p>배우 : {{ actors }}</p>
-                <p>{{ selected_movie.overview }}</p>
-                <p>키워드 : {{ keywords }}</p>
-                <a style="color:violet" href="{% url 'movies:like' selected_movie.id %}">♥dddd</a>
             </div>
         </div>
         {% endif %}
 
-        <iframe class="fullscreen" id='video_iframe' type="text/html" src="" width="100%" height="100%" frameborder="0" allowfullscreen style="position:absolute"></iframe>
+        <iframe class="fullscreen" id='video_iframe' type="text/html" src="" width="100%" height="100%" frameborder="0" allowfullscreen style="position:absolute;"></iframe>
 
         <div id="footer" onmouseover="m_over()" onmouseout="m_out()" >
             <script type="text/javascript">
@@ -126,6 +132,7 @@
                 <a class="userinfo" href="{% url 'movies:signup' %}">회원가입</a>
             {% endif %}
         </div>
+    </div>
     </div>
     <script>
         function vote_gage_event(vote_average){

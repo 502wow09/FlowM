@@ -13,7 +13,6 @@ urlpatterns = [
     path('userinfo', views.userinfo, name='userinfo'),
     path('change_pw', views.change_pw, name='change_pw'),
     path('<int:movie_id>/like', views.like, name='like'),
-    path('mgdf', views.mgdf, name='mgdf'),
 
     # path('<int:question_id>/', views.detail, name='detail'),    #url 'detail'로 사용
     # path('learning/', views.learning, name='learning'),

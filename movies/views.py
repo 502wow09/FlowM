@@ -163,6 +163,13 @@ def detail(request, movie_id):
             similars_list.append(Movie.objects.get(id=row['id']))
         except: pass
 
+        on_like='gray'
+        try:
+            Likes.objects.get(user_id=request.user, movie_id=movie_id)
+            on_like='red'
+        except:
+            on_like='gray'
+
     context = {
         'selected_movie': selected_movie,
         'config': Configuration.objects.get(pk=1),
@@ -171,6 +178,7 @@ def detail(request, movie_id):
         # 'directors' : ", ".join(director_list),
         'actors' : ", ".join(actor_list),
         'similar_list' : similars_list,
+        'on_like' : on_like,
     }
     return render(request, 'movies/detail.html', context)
 
@@ -467,22 +475,23 @@ def userinfo(request):
     content = {'likes':like_movies, 'recos':recommand_movies}
     return render(request, 'movies/userinfo.html', content )
 
+# anaconda notebook 출력 확인
+    # def mgdf(request):
+    #     data = list(Movie_Genre.objects.all().values('movie_id', 'genre_id'))
+    #     df = pd.DataFrame(data)
+    #     df['genre_id'] = df['genre_id'].apply(str)
+    #     df = df.groupby('movie_id')['genre_id'].apply(' '.join).reset_index()
 
-def mgdf(request):
-    data = list(Movie_Genre.objects.all().values('movie_id', 'genre_id'))
-    df = pd.DataFrame(data)
-    df['genre_id'] = df['genre_id'].apply(str)
-    df = df.groupby('movie_id')['genre_id'].apply(' '.join).reset_index()
+    #     from sklearn.feature_extraction.text import CountVectorizer
+    #     count_vector = CountVectorizer(ngram_range=(1,3))
+    #     vector_genres = count_vector.fit_transform(df['genre_id'])
 
-    from sklearn.feature_extraction.text import CountVectorizer
-    count_vector = CountVectorizer(ngram_range=(1,3))
-    vector_genres = count_vector.fit_transform(df['genre_id'])
+    #     from sklearn.metrics.pairwise import cosine_similarity
+    #     cos_sim = cosine_similarity(vector_genres, vector_genres).argsort()[:, ::-1]
 
-    from sklearn.metrics.pairwise import cosine_similarity
-    cos_sim = cosine_similarity(vector_genres, vector_genres).argsort()[:, ::-1]
+    #     context = { 'state': 'Done.', 'df': cos_sim.shape }
+    #     return render(request, 'movies/learn.html', context)
 
-    context = { 'state': 'Done.', 'df': cos_sim.shape }
-    return render(request, 'movies/learn.html', context)
 
 @login_required
 def change_pw(request):
@@ -507,13 +516,11 @@ def change_pw(request):
 @login_required
 def like(request, movie_id):
     user = User.objects.get(username=request.user)
-
-    if Likes.objects.filter(user_id=user, movie_id=movie_id):
-        Likes.objects.filter(user_id=user, movie_id=movie_id).delete()
-        on_like=0
+    like_this = Likes.objects.filter(user_id=user, movie_id=movie_id)
+    if like_this:
+        like_this.delete()
     else:
         Likes.objects.create(user_id=user, movie_id=movie_id)
-        on_like=1
     # return render(request, 'movies/ex.html', {'user':user, 'movie_id':movie_id, 'on':on_like})
     return redirect('movies:detail', movie_id)
 
