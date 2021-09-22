@@ -4,12 +4,30 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>FlowM</title>
+
+    {% load static %}
+    <script type="text/javascript" src="{% static 'movies/m_event.js' %}"></script>
 </head>
 <body>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'movies/style.css' %}">
-    <div class="fullscreen" style="position: fixed;">
+    <div class="fullscreen" style="position: fixed;background-color: black;">
+        <div class="container_like">
+            {% for like in likes %}
+            <div class="like_poster" id="{{ like.id }}" style="margin:25px; position:relative; display:inline-block; z-index: 1;" onmouseover="like_over('like{{ like.id }}')" onmouseout="like_out('like{{ like.id }}')">
+                <a class="like_poster" id="like{{ like.id }}" href="{% url 'movies:detail' like.id %}" style="cursor: pointer; opacity: 0.8;">
+                    <img class="like_poster" src="https://image.tmdb.org/t/p/{{ config.poster_size }}/{{ like.poster_path }}">
+                </a>
+            </div>
+            <!-- {{like}}<br>
+            {{like.poster_path}}<br> -->
+            {% endfor %}
+        </div>
+        <script>
+
+        </script>
+
         <header>
             <div class="brand_div" onclick="location.href='/'">
                 <h1 class='brand'>FlowM</h1>
@@ -31,28 +49,79 @@
                 <a class="userinfo" href="{% url 'movies:signup' %}">회원가입</a>
             {% endif %}
         </div>
+        <div id="right_menu" >
+            <p>{{ user.username }}</p>
+            <p>{{ user.email }}</p>
+            <div style="width:250px; height:50px;text-align: center;">
+                <a style="position:relative;width:100px; height:20px;color:white;font-weight:bold; text-decoration: none;" href="{% url 'movies:change_pw' %}">비밀번호 변경</a>
+            </div>
+        </div>
+    
+        <div id="footer" style="background-color: black;" onmouseover="m_over()" onmouseout="m_out()" >
+            <script type="text/javascript">
+                const scrollControl = document.querySelector('#footer');
+                scrollControl.addEventListener('wheel', function(e){
+                    scrollControl.scrollLeft += e.deltaY;
+                });
+            </script>
+            <div id="genre" style="background-color: none;">
+            </div>
+            {% if recos %}
+                {% for reco in recos %}
+                <!-- {{ forloop.counter0 }} -->
+                        <div class="thumnails" id="{{ reco.id }}" onclick="m_onclick(this.id);">
+                            <a class="thumnail" id="a{{ reco.id }}">
+                                <img class="thumnail_img" src="https://image.tmdb.org/t/p/{{ config.thumbnail_size }}/{{ reco.poster_path }}" 
+                                alt="thumbnails"; onerror="this.src='/images/no_image.jpg'"; loading="lazy";>    
+                            </a>
+                            <div class="uptext">                 
+                                <li>{{ reco.title }}</li>
+                                <li></li>
+                                <li style="border-radius: 2em;border: 2px solid white;height:25px;margin-top:10px;margin-left:10px;margin-right:10px;padding-top:2px;padding-bottom:2px;">{{ reco.vote_average }}</li>
+                                <div id="v{{ reco.id }}" style="opacity:0;">
+                                    {{ reco.video_path }}
+                                </div>
+                            </div> 
+                        </div> 
+                {% endfor %}
+            {% else %}
+                <p>No movies</p>
+            {% endif %}
+        </div>
+        <script>
+            function like_over(movie_id){
+                    let now_selected_movie = document.getElementById(movie_id);
+                    now_selected_movie.style.transform="scale(1.1)";
+                    now_selected_movie.style.border="5px solid white";
+                    now_selected_movie.style.opacity="1";
+                    document.getElementById("like"+movie_id).href = "{% url 'movies:detail' 777 %}".replace(/777/, Number(movie_id));
+            }   
+    
+            function like_out(movie_id){
+                    let now_selected_movie = document.getElementById(movie_id);
+                    now_selected_movie.style.transform="scale(1.0)";
+                    now_selected_movie.style.border="none";
+                    now_selected_movie.style.opacity="0.8";
+            }
 
+            function m_onclick(movie_id){
+                if (last_selected_id === movie_id){
+                    document.getElementById("a"+movie_id).href = "{% url 'movies:detail' 777 %}".replace(/777/, Number(movie_id));
+                }
+                else if (last_selected_id === 0){
+                    last_selected_id = movie_id;
+                }
+                let last_selected_movie = document.getElementById(last_selected_id);
+                last_selected_movie.style.transform="scale(1.0)";
+                last_selected_movie.style.border="none";
 
-    <div id="right_menu">
-    <p>{{ user.username }}</p>
-    <p>{{ user.email }}</p>
-    <div style="width:130px; height:50px;text-align: center;">
-        <a style="position: relative;width:100px; height:20px;color:white; left:50%;font-weight:bold;  text-decoration: none;" href="{% url 'movies:change_pw' %}">비밀번호 변경</a></div>
-    </div>
-    like movies : 
-    {% for like in likes %}
-        {{like}}<br>
-        {{like.poster_path}}<br>
-    {% endfor %}
-    <br>
-    recommand movies :
-    {% for reco in recos %}
-        {{reco}}
-    {% endfor %}
-
-
-
-
+                last_selected_id = movie_id;
+                let now_selected_movie = document.getElementById(movie_id);
+                now_selected_movie.style.transform="scale(1.2)";
+                now_selected_movie.style.border="5px solid white";
+                now_selected_movie.style.opacity="1";
+            }
+        </script>
     </div>
 </body>
 </html>

@@ -338,3 +338,26 @@ font-size: x-large;
 font-weight: bold;
 border: none; 
 */
+
+.container_like{
+    position:absolute;
+    left:15%;
+    top:10%;
+    padding:50px;
+    padding-top:25px;
+    width:63%;
+    height: 53%;
+    background-color: darkgray;
+    border-radius: 2em 2em 0 0 ;
+    overflow:scroll; 
+}
+.container_like::-webkit-scrollbar{
+    display: none;
+}
+
+.like_poster{
+    position:absolute;
+
+    width:210px;
+    height:300px;
+}

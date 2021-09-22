@@ -75,4 +75,10 @@ class Comment(models.Model):
     created_at = models.DateTimeField('date created')
     updated_at = models.DateTimeField('date updated')
 
+class Querylist(models.Model):
+    query_name = models.CharField(max_length=100)
+  
+    def __str__(self):
+        return self.query_name
+
 
