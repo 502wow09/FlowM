@@ -58,7 +58,11 @@
                             {{ selected_movie.vote_average }}
                         </div>
                         <div id="like">
-                            <a id="like_{{on_like}}" class="like_a" href="{% url 'movies:like' selected_movie.id %}">♥</a>
+                            {% if user.is_active %}
+                                <a id="like_{{on_like}}" class="like_a" href="{% url 'movies:like' selected_movie.id %}">♥</a>
+                            {% else %}
+                                <a id="like_{{on_like}}" class="like_a" href="{% url 'movies:signin' %}">♥</a>
+                            {% endif %}
                         </div>
                     </div>
 

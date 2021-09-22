@@ -323,7 +323,7 @@ def signin(request):
             login(request, user)
             return redirect('movies:main')
         if user is None:
-            context = {'form':form, 'error':"로그인 실패. 계정 정보가 없습니다."}
+            context = {'form':form, 'error':"일치하는 정보가 없습니다."}
             return render(request, 'movies/signin.html', context)
     else:
         form = LoginForm()
