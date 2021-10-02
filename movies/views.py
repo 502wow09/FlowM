@@ -15,7 +15,9 @@ import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-KEY="689125aca44db2c4475bb17c79fc8ff4"
+from django.conf import settings
+
+KEY = settings.TMDB_KEY
 
 # Create your views here.
 def main(request):
