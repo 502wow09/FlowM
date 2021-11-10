@@ -19,6 +19,7 @@
             let last_selected_movie = document.getElementById(last_selected_id);
             last_selected_movie.style.transform="scale(1.0)";
             last_selected_movie.style.border="none";
+            document.getElementById("d"+last_selected_id).style.display="none";
 
             last_selected_id = movie_id;
             let now_selected_movie = document.getElementById(movie_id);
@@ -28,6 +29,7 @@
             document.getElementById("video_iframe").src = "https://www.youtube.com/embed/777?"+
             "autoplay=1&disablekb=1&controls=0&fs=0&loop=1&&playlist=777&modestbranding=1&mute=1"
             .replace(/777/, document.getElementById("v"+movie_id).innerText)
+            document.getElementById("d"+last_selected_id).style.display="";
         }
     </script>
 </head>
@@ -77,7 +79,7 @@
                         </a>
                         <div class="uptext">                 
                             <li>{{ movie.title }}</li>
-                            <li></li>
+                            <li id="d{{ movie.id }}" style="display:none;"><U>More</U></li>
                             <li style="border-radius: 2em;border: 2px solid white;height:25px;margin-top:10px;margin-left:10px;margin-right:10px;padding-top:2px;padding-bottom:2px;">{{ movie.vote_average }}</li>
                             <div id="v{{ movie.id }}" style="opacity:0;">
                                 {{ movie.video_path }}

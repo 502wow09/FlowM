@@ -79,7 +79,6 @@ def detail(request, movie_id):
     # mg = m.movie_genre_set.all()  #_set에 오류남.
     # g = mg.genre.name
     
-    # 되는 코드!!!!!!!!!!!!!
     # Movie_Genre에 id를 넣은 후, genre로 정참조함.
         # 그 때 정참조할 땐 참조할 모델명이 아닌 현재 모델의 외래키를 넣어야 함. genre_id로.
     # movie_genres = Movie_Genre.objects.filter(movie_id=movie_id)[0]
@@ -201,6 +200,7 @@ def detail(request, movie_id):
 
 def search(request): 
     query = None
+
     if 'input_movie' in request.GET:
         # return render(request, 'movies/error.html', {
         #     'error_message': request.GET.get('input_movie')
@@ -247,6 +247,9 @@ def search(request):
 
 
             for page in range(2,total_pages):
+                #배포용 제한
+                if page > 10: break
+
                 url = "https://api.themoviedb.org/3/search/movie?api_key={key}&language=ko-KR&page={p}&query={query}".format(key=KEY, query=query, p=page)
                 response = requests.get(url).json()
                 movies = response['results']
