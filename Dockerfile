@@ -1,4 +1,4 @@
-FROM python:2.8.2
+FROM python:latest
 RUN mkdir movieapp/
 COPY . /movieapp
 WORKDIR /movieapp/
