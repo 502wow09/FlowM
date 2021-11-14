@@ -39,7 +39,8 @@ TMDB_KEY = get_secret_key('TMDB_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# for docker add host '0.0.0.0'
+ALLOWED_HOSTS = ['0.0.0.0']
 
 
 # Application definition
