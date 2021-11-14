@@ -40,7 +40,7 @@ TMDB_KEY = get_secret_key('TMDB_KEY')
 DEBUG = True
 
 # for docker add host '0.0.0.0'
-ALLOWED_HOSTS = ['0.0.0.0']
+ALLOWED_HOSTS = ['0.0.0.0', '127.0.0.1', 'localhost', '172.31.37.40']
 
 
 # Application definition
